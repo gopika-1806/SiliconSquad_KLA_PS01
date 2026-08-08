@@ -1,35 +1,78 @@
-# MemoryVerse AI — Digital Identity System
+# AI-Based Restoration of Degraded Images for Semiconductor Inspection
 
-An AI-powered system that turns a student's scattered documents — certificates, resumes, project reports, internship letters, portfolios — into a structured, searchable, connected digital identity.
+**Team:** Silicon Squad  
+**Members:** Gopika B, Gobika V, Brindha P  
+**Problem Statement:** AI-Based Restoration of Degraded Images for Semiconductor Inspection (KLA)
 
-## Problem
+## Overview
 
-Students accumulate proof of their growth across years: certificates, GitHub repos, internship offers, achievements. This evidence sits scattered across folders, emails, and drives. Traditional storage can save the files, but it can't understand how they connect to a person's journey.
+This project restores degraded semiconductor wafer inspection images (speckle noise, Gaussian noise, and reduced spatial resolution) back to clean, high-resolution images using a deep learning model. The model takes a 128x128 degraded grayscale image as input and outputs a restored 256x256 clean image.
 
-## What it does
+## Model Architecture
 
-1. **AI Data Ingestion** — accepts uploaded files or pasted content (certificates, resumes, project reports, internship letters, portfolio links).
-2. **Intelligent Categorization** — an LLM call automatically classifies each item into Projects, Skills, Certifications, Internships, Achievements, or Academics — no manual sorting.
-3. **Relationship Engine** — the same call detects links to existing items (Certification → Skill → Project → Internship), so the system understands cause and effect in a person's growth, not just isolated files.
-4. **Digital Journey Timeline** — every item is placed on a year-by-year timeline, visualizing growth over time.
-5. **Smart Retrieval System** — a natural-language search bar ("show all my certificates", "what AI projects have I done?") is answered by sending the full item catalog to the model and asking it to pick and explain the relevant matches. Original content is never rewritten, only indexed.
+A U-Net style convolutional neural network with residual connections:
+- 3-level encoder-decoder architecture with skip connections
+- Residual blocks (Conv + BatchNorm + ReLU with skip connections) for stable training
+- Final upsampling layer to convert 128x128 input to 256x256 output (2x super-resolution)
+- Combined loss function: L1 loss + SSIM loss + Sobel edge loss (for sharp edge preservation)
 
-## How the AI is used
+## Results
 
-Every "understanding" step (categorize, connect, search) is a single call to Claude (`claude-sonnet-4-6`) with a strict JSON-only system prompt, so the app stays deterministic and easy to reason about. There is no manual sorting anywhere in the flow — the model is the classifier, the relationship-mapper, and the retrieval layer.
+| Metric | Score |
+|--------|-------|
+| SSIM   | ~0.77 |
+| PSNR   | ~28.5 dB |
 
-## Tech
+## Trained Model Weights
 
-- Single-page React UI (see `MemoryVerse.jsx`)
-- Claude API (`/v1/messages`) for classification, relationship-mapping, and semantic search
-- No backend/database required for the demo — items live in-memory for the session; a production version would persist to a vector database (see `architecture.mermaid`)
+Due to GitHub's 25MB file size limit, the trained model weights are hosted on Google Drive:
 
-## Running it
+**Download:** https://drive.google.com/file/d/123t2-2aei8XhJhjLSYWjENyuj5z57h2r/view?usp=sharing
 
-This is built as a self-contained React artifact. Drop it into any environment that can render a React component with `fetch` access to `api.anthropic.com/v1/messages` (e.g. Claude.ai artifacts, or a Vite/CRA app with the same API wiring).
+Download `restoration_model_v4.pt` and place it in the repository root before running `evaluate.py`.
 
-## Files in this submission
+## Setup Instructions
 
-- `MemoryVerse.jsx` — working prototype (UI + AI calls)
-- `architecture.mermaid` — AI workflow / system architecture diagram
-- `thought_process.md` — design reasoning, trade-offs, and what a production version would add
+### 1. Clone the repository
+```bash
+git clone <your-repo-url>
+cd SiliconSquad_KLA_PS01
+```
+
+### 2. Install dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Run inference on test images
+```bash
+python evaluate.py --input_dir <path_to_test_noisy_images> --output_dir <path_to_save_restored_images> --model_path restoration_model_v5.pt
+```
+
+This will:
+- Load the trained model
+- Read all `.npy` degraded test images from `input_dir`
+- Restore each image
+- Save restored `.npy` images to `output_dir`
+
+### 4. Training (to reproduce from scratch)
+See `train.py` or `training_notebook.ipynb` for the full training pipeline, including data loading, model definition, and training loop.
+
+## Files in this Repository
+
+| File | Description |
+|------|--------------|
+| `README.md` | This file |
+| `evaluate.py` | Standalone inference/evaluation script |
+| `train.py` | Training script to reproduce the model from scratch |
+| `restoration_model_v5.pt` | Final trained model weights |
+| `restored_test_outputs/` | Model outputs on the provided test set |
+| `requirements.txt` | Python dependencies |
+
+## Technology Stack
+
+- Python, PyTorch
+- NumPy
+- scikit-image (for SSIM/PSNR evaluation)
+- pytorch-msssim (for SSIM loss during training)
+- Trained on Google Colab (T4 GPU)
