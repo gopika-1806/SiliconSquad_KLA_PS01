@@ -54,7 +54,7 @@ pip install -r requirements.txt
 
 ### 3. Run inference on test images
 ```bash
-python evaluate.py --input_dir <path_to_test_noisy_images> --output_dir <path_to_save_restored_images> --model_path restoration_model_v5.pt
+python evaluate.py --input_dir <path_to_test_noisy_images> --output_dir <path_to_save_restored_images> --model_path restoration_model_v4.pt
 ```
 
 This will:
@@ -73,7 +73,7 @@ See `train.py` or `training_notebook.ipynb` for the full training pipeline, incl
 | `README.md` | This file |
 | `evaluate.py` | Standalone inference/evaluation script |
 | `train.py` | Training script to reproduce the model from scratch |
-| `restoration_model_v5.pt` | Final trained model weights |
+| `restoration_model_v4.pt` | Final trained model weights |
 | `restored_test_outputs/` | Model outputs on the provided test set |
 | `requirements.txt` | Python dependencies |
 
