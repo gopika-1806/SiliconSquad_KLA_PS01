@@ -31,6 +31,14 @@ Due to GitHub's 25MB file size limit, the trained model weights are hosted on Go
 
 Download `restoration_model_v4.pt` and place it in the repository root before running `evaluate.py`.
 
+## Restored Test Outputs
+
+Due to file size limits, the restored test outputs are hosted on Google Drive:
+
+**Download:** https://drive.google.com/file/d/1c2t5UituB5rzrR7vDC1d-2h9SNQCV41v/view?usp=sharing
+
+This ZIP contains the model's restored outputs (`.npy` files) for all 400 images in the provided test set.
+
 ## Setup Instructions
 
 ### 1. Clone the repository
